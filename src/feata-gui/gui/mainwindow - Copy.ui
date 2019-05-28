@@ -1,0 +1,327 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1078</width>
+    <height>628</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>FEA Test Application</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QVBoxLayout" name="verticalLayout_2">
+    <item>
+     <widget class="QSplitter" name="splitter">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+      <property name="handleWidth">
+       <number>9</number>
+      </property>
+      <widget class="OglWidget" name="renderView" native="true">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+      </widget>
+      <widget class="gui::wnd::LogWidget" name="plainTextEdit">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+       <property name="backgroundVisible">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1078</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <widget class="QMenu" name="menuExport">
+     <property name="title">
+      <string>Export</string>
+     </property>
+     <addaction name="actionExportMesh"/>
+     <addaction name="actionExportResults"/>
+    </widget>
+    <addaction name="actionFileOpen"/>
+    <addaction name="actionFileClose"/>
+    <addaction name="separator"/>
+    <addaction name="menuExport"/>
+   </widget>
+   <widget class="QMenu" name="menuView">
+    <property name="title">
+     <string>View</string>
+    </property>
+    <addaction name="actionViewSetDefaultView"/>
+    <addaction name="actionViewSetBackground"/>
+   </widget>
+   <widget class="QMenu" name="menuMesh">
+    <property name="title">
+     <string>Mesh</string>
+    </property>
+    <addaction name="actionMeshCreate"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuView"/>
+   <addaction name="menuMesh"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QToolBar" name="toolBar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>20</width>
+     <height>20</height>
+    </size>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>RightToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionSelectionRect"/>
+   <addaction name="actionSelectionClear"/>
+   <addaction name="separator"/>
+   <addaction name="actionViewXYZ"/>
+   <addaction name="actionViewXY"/>
+   <addaction name="actionViewYZ"/>
+   <addaction name="actionViewXZ"/>
+   <addaction name="actionViewMirror"/>
+   <addaction name="actionViewWireframe"/>
+  </widget>
+  <widget class="QDockWidget" name="dockWidget_2">
+   <property name="features">
+    <set>QDockWidget::DockWidgetFloatable|QDockWidget::DockWidgetMovable</set>
+   </property>
+   <property name="allowedAreas">
+    <set>Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea</set>
+   </property>
+   <property name="windowTitle">
+    <string>Project Tree</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>1</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents_9">
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <widget class="QTreeWidget" name="projectTree">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <column>
+        <property name="text">
+         <string notr="true">1</string>
+        </property>
+       </column>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <action name="actionFileOpen">
+   <property name="text">
+    <string>Open...</string>
+   </property>
+  </action>
+  <action name="actionFileClose">
+   <property name="text">
+    <string>Close current</string>
+   </property>
+  </action>
+  <action name="actionExportMesh">
+   <property name="text">
+    <string>Mesh...</string>
+   </property>
+  </action>
+  <action name="actionExportResults">
+   <property name="text">
+    <string>Results...</string>
+   </property>
+  </action>
+  <action name="actionViewSetDefaultView">
+   <property name="text">
+    <string>Set default view</string>
+   </property>
+  </action>
+  <action name="actionMeshCreate">
+   <property name="text">
+    <string>Create...</string>
+   </property>
+  </action>
+  <action name="actionViewSetBackground">
+   <property name="text">
+    <string>Background...</string>
+   </property>
+  </action>
+  <action name="actionSelectionClear">
+   <property name="icon">
+    <iconset resource="../../../resource/icons.qrc">
+     <normaloff>:/img/shared/img/unselect.png</normaloff>:/img/shared/img/unselect.png</iconset>
+   </property>
+   <property name="text">
+    <string>Clear selection</string>
+   </property>
+   <property name="toolTip">
+    <string>Clear selection</string>
+   </property>
+  </action>
+  <action name="actionSelectionRect">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../../resource/icons.qrc">
+     <normaloff>:/img/shared/img/select.png</normaloff>:/img/shared/img/select.png</iconset>
+   </property>
+   <property name="text">
+    <string>Rectangle selection</string>
+   </property>
+   <property name="toolTip">
+    <string>Rectangle selection. Use &quot;CTRL&quot; for union mode, &quot;SHIFT&quot; — for substraction mode.</string>
+   </property>
+  </action>
+  <action name="actionViewXY">
+   <property name="icon">
+    <iconset resource="../../../resource/icons.qrc">
+     <normaloff>:/img/shared/img/planeViewXY.png</normaloff>:/img/shared/img/planeViewXY.png</iconset>
+   </property>
+   <property name="text">
+    <string>XY View</string>
+   </property>
+   <property name="toolTip">
+    <string>XY View. Rotates 90 degrees if chosen again</string>
+   </property>
+  </action>
+  <action name="actionViewXZ">
+   <property name="icon">
+    <iconset resource="../../../resource/icons.qrc">
+     <normaloff>:/img/shared/img/planeViewXZ.png</normaloff>:/img/shared/img/planeViewXZ.png</iconset>
+   </property>
+   <property name="text">
+    <string>XZ View</string>
+   </property>
+   <property name="toolTip">
+    <string>XZ View. Rotates 90 degrees if chosen again</string>
+   </property>
+  </action>
+  <action name="actionViewYZ">
+   <property name="icon">
+    <iconset resource="../../../resource/icons.qrc">
+     <normaloff>:/img/shared/img/planeViewYZ.png</normaloff>:/img/shared/img/planeViewYZ.png</iconset>
+   </property>
+   <property name="text">
+    <string>YZ View</string>
+   </property>
+   <property name="toolTip">
+    <string>YZ View. Rotates 90 degrees if chosen again</string>
+   </property>
+  </action>
+  <action name="actionViewMirror">
+   <property name="icon">
+    <iconset resource="../../../resource/icons.qrc">
+     <normaloff>:/img/shared/img/mirrorView.png</normaloff>:/img/shared/img/mirrorView.png</iconset>
+   </property>
+   <property name="text">
+    <string>Mirror view</string>
+   </property>
+   <property name="toolTip">
+    <string>Mirror the view with respect to the last chosen plane view.</string>
+   </property>
+  </action>
+  <action name="actionViewSun">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../../resource/icons.qrc">
+     <normaloff>:/img/shared/img/viewSun.png</normaloff>:/img/shared/img/viewSun.png</iconset>
+   </property>
+   <property name="text">
+    <string>Global illumination</string>
+   </property>
+   <property name="toolTip">
+    <string>Switch global illumination</string>
+   </property>
+  </action>
+  <action name="actionViewXYZ">
+   <property name="icon">
+    <iconset resource="../../../resource/icons.qrc">
+     <normaloff>:/img/shared/img/planeViewXYZ.png</normaloff>:/img/shared/img/planeViewXYZ.png</iconset>
+   </property>
+   <property name="text">
+    <string>Standard view</string>
+   </property>
+   <property name="toolTip">
+    <string>Standard view</string>
+   </property>
+  </action>
+  <action name="actionViewWireframe">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../../resource/icons.qrc">
+     <normaloff>:/img/shared/img/viewWireframe.png</normaloff>:/img/shared/img/viewWireframe.png</iconset>
+   </property>
+   <property name="text">
+    <string>Wireframe view</string>
+   </property>
+   <property name="toolTip">
+    <string>Toggle wireframe view</string>
+   </property>
+  </action>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>OglWidget</class>
+   <extends>QWidget</extends>
+   <header>gui/ogl_widget.hpp</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>gui::wnd::LogWidget</class>
+   <extends>QPlainTextEdit</extends>
+   <header>gui/wnd/logwidget.hpp</header>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="../../../resource/icons.qrc"/>
+ </resources>
+ <connections/>
+</ui>

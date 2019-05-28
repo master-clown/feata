@@ -1,0 +1,28 @@
+#pragma once
+
+
+namespace geom { class GeomVis; }
+namespace mesh { class MeshVis; }
+
+namespace gui
+{
+    class RenderLst
+    {
+    public:
+        RenderLst();
+       ~RenderLst();
+        
+        void SetCurrentGeometry(geom::GeomVis* g);
+        void SetCurrentMesh(mesh::MeshVis* m);
+        void RemoveGeometry(geom::GeomVis* g);
+        void RemoveMesh(mesh::MeshVis* m);
+        
+        geom::GeomVis* GetCurrentGeometry() const;
+        mesh::MeshVis* GetCurrentMesh() const;
+        
+    private:
+        struct RenderListPriv;
+        
+        RenderListPriv* priv_;
+    };
+}

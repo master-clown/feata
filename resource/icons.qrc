@@ -1,0 +1,25 @@
+<RCC>
+    <qresource prefix="/img">
+        <file>shared/img/select.png</file>
+        <file>shared/img/unselect.png</file>
+        <file>shared/img/planeViewXY.png</file>
+        <file>shared/img/planeViewXZ.png</file>
+        <file>shared/img/planeViewYZ.png</file>
+        <file>shared/img/mirrorView.png</file>
+        <file>shared/img/viewSun.png</file>
+        <file>shared/img/planeViewXYZ.png</file>
+        <file>shared/img/viewWireframe.png</file>
+        <file>shared/img/stop.png</file>
+        <file>shared/img/feata.png</file>
+        <file>shared/img/geometry_icon.png</file>
+        <file>shared/img/mesh_icon.png</file>
+        <file>shared/img/plugin_icon.png</file>
+        <file>shared/img/postproc_icon.png</file>
+        <file>shared/img/select_base.png</file>
+        <file>shared/img/solver_icon.png</file>
+        <file>shared/img/triang_icon.png</file>
+        <file>shared/img/accepted.png</file>
+        <file>shared/img/rejected.png</file>
+        <file>shared/img/displacement.png</file>
+    </qresource>
+</RCC>

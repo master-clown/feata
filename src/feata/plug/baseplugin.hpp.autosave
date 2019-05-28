@@ -1,0 +1,43 @@
+#pragma once
+
+#include "plug/version.hpp"
+#include "plug/iplugin.h"
+#include "plug/service.h"
+
+
+namespace plug
+{
+    struct PluginInfo
+    {
+        String Name;
+        String Desc;    // descrition
+        String File;
+        Version Vers;
+
+        String GetEncodedName() const;
+    };
+
+    struct BasePlugin
+    {
+        PluginInfo      Info;
+        PluginCreateCb  CreateCb;
+        PluginFreeCb    FreeCb;
+
+        virtual ~BasePlugin() = default;
+        
+        virtual bool CreatePlugin(Vector<ServiceCb>& service_lst) = 0;
+        
+        String GetAssociatedLibName() const;
+    };
+
+    enum PluginType
+    {
+        PLUGIN_TYPE_BASIC
+    };
+
+    struct Plugin                   // on destroy: free 'Plugin' and unload associated library
+            : public BasePlugin
+    {
+        IPlugin*        Plugin;
+    };
+}

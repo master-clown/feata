@@ -1,0 +1,23 @@
+[
+    {
+        "codename": 		"young",
+        "fullname": 		"Young modulus",
+        "desc":				"",
+        "type": 			"real",
+        "value": 			"2.0e+11"
+    },
+    {
+        "codename": 		"poisn",
+        "fullname": 		"Poisson's ratio",
+        "desc":				"",
+        "type": 			"real",
+        "value": 			"0.3"
+    },
+    {
+        "codename": "face_bc",
+        "fullname": "Face boundary conditions",
+        "desc":     "Syntax: \"{u,f}[x][y][z] = <num>, ...\" OR \"p = <val>\" , where u: displacement, f: force, p: pressure.\nExamples: \"uxz = 0.0, uy = 1.0\".",
+        "type":     "geom_select_string",
+        "geom_select_type": "face"
+    }
+]

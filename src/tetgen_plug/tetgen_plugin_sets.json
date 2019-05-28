@@ -1,0 +1,23 @@
+[
+	{
+		"codename": 		"max_elem_volume",
+		"fullname": 		"Maximum element volume",
+		"desc":				"Limits volumes of generated tetrahedra to be less than specified positive value.",
+		"type": 			"real",
+		"value": 			"0.1"
+	},
+	{
+		"codename": 		"max_rad_edge_ratio",
+		"fullname": 		"Maximum radius/edge ratio",
+		"desc":				"Limits volumes of generated tetrahedra to be less than specified positive value.",
+		"type": 			"real",
+		"value": 			"2.0"
+	},
+	{
+		"codename": 		"max_bound_face_elem_area",
+		"fullname": 		"Maximum element face area on shape's face",
+		"desc":				"Limits area of generated tetrahedra's face, which belongs to specified shape's face, to be less than specified positive value.",
+        "type": 			"geom_select_string",
+		"geom_select_type": "face"
+	}
+]

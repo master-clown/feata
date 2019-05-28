@@ -1,0 +1,41 @@
+#include "geom/feageom.hpp"
+#include <TopoDS_Shape.hxx>
+#include "geom/mdl/stepmodel.hpp"
+
+
+namespace geom
+{
+    struct FeaGeomPriv
+    {
+        TopoDS_Shape* Shape;
+
+        FeaGeomPriv() = default;
+        ~FeaGeomPriv()
+        {
+            SAFE_DEL(Shape);
+        }
+    };
+
+    FeaGeom::FeaGeom()
+    {
+
+    }
+
+    FeaGeom::~FeaGeom()
+    {
+
+    }
+
+    bool FeaGeom::Load(const String& file_name)
+    {
+        mdl::StepModel mdl;
+        if(!mdl.Load(file_name))
+            return false;
+
+        geom_->Shape = mdl.ToOCCModel();
+
+        return true;
+    }
+
+    TopoDS_Shape* FeaGeom::ToOCCModel() { return geom_->Shape; }
+}

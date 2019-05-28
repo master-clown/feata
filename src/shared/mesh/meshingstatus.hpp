@@ -1,0 +1,10 @@
+#pragma once
+
+
+enum MeshingStatus
+{
+    MESHING_STATUS_NOT_STARTED,
+    MESHING_STATUS_IN_PROGRESS,
+    MESHING_STATUS_FINISHED,
+    MESHING_STATUS_ERROR
+};

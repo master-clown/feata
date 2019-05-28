@@ -1,0 +1,47 @@
+#include "gui/renderlst.hpp"
+#include <Standard_Handle.hxx>
+#include "defs/common.hpp"
+#include "geom/geomvis.hpp"
+#include "mesh/meshvis.hpp"
+#include "stl/map.hpp"
+
+
+class AIS_Shape;
+class MeshVS_Mesh;
+
+namespace gui
+{
+    struct RenderLst::RenderListPriv
+    {
+        geom::GeomVis* CurrGeometry;
+        mesh::MeshVis* CurrMesh;
+        
+        Map<geom::GeomVis*, 
+            Handle(AIS_Shape)> GeomLst;
+        Map<mesh::MeshVis*, 
+            Handle(MeshVS_Mesh)> MeshLst;
+    };
+
+    RenderLst::RenderLst() : priv_(new RenderListPriv) {}        
+    RenderLst::~RenderLst() { SAFE_DEL(priv_); }
+    
+    void RenderLst::SetCurrentGeometry(geom::GeomVis* g)
+    {
+        if(!priv_->GeomLst.contains(g))
+            priv_->GeomLst[g] = g->GetOCCModel();
+        
+        priv_->CurrGeometry = g;
+    }
+    
+    void RenderLst::SetCurrentMesh(mesh::MeshVis* m)
+    {
+        if(!priv_->MeshLst.contains(m))
+            priv_->MeshLst[m] = m->GetOCCMesh();
+        
+        priv_->CurrMesh = m;
+    }
+    
+    
+    geom::GeomVis* RenderLst::GetCurrentGeometry() const { return priv_->CurrGeometry; }
+    mesh::MeshVis* RenderLst::GetCurrentMesh() const { return priv_->CurrMesh; }
+}
