@@ -3,10 +3,17 @@
 A C++ program, which creates a basement for usage and testing of Finite Element Method (FEM) algorithms for practical problems.
 
 **Table of Contents**
+- [Finite Element Analysis Test Application](#finite-element-analysis-test-application)
+- [Description](#description)
+- [Platforms](#platforms)
+- [Components](#components)
+- [Used third-party software](#used-third-party-software)
+- [How to build](#how-to-build)
+  * [Windows](#windows)
+  * [Linux](#linux)
+- [Plugin system](#plugin-system)
+- [License](#license)
 
-[TOCM]
-
-[TOC]
 
 # Description
 The program provides GUI and plugin system for working with FEM algorithms. It allows to load 3D geometry, generate its volumeric mesh and solve a problem, described in terms of FEM, by using user-developed plugins.
