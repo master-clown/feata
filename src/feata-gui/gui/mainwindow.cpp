@@ -29,7 +29,7 @@
 #include "test/test.hpp"
 #include "util/log.hpp"
 #include "util/paralleltask.hpp"
-#include "util/treewidgetitem.hpp"
+#include "gui/util/treewidgetitem.hpp"
 
 #define SETTINGS_FILE_NAME "settings.ini"
 
@@ -554,7 +554,7 @@ namespace gui
                 RemoveTrianGeometry(proj_->GetGeometry()->GetPolygonizedGeomVis());
 
         auto parent = tree_main_item_lst_[PROJ_TREE_MAIN_ITEM_GEOM_TRIAN];
-        for(int i = parent->childCount() - 1; i > 0; --i)
+        for(int i = parent->childCount() - 1; i >= 0; --i)
         {
             auto ch = static_cast<TreeWidgetItem*>(parent->child(i));
             OnTreeGeomTrianInstDelete(ch, false);
@@ -1168,6 +1168,7 @@ namespace gui
         UnloadSolver();
         UnloadMeshPlugs();
         UnloadMesh();
+        UnloadTriang();
         UnloadGeometry();
 
         UnlockGui();

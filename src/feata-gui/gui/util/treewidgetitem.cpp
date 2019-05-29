@@ -1,4 +1,4 @@
-#include "util/treewidgetitem.hpp"
+#include "gui/util/treewidgetitem.hpp"
 
 
 namespace gui
@@ -52,12 +52,14 @@ namespace gui
     {
         switch (type)
         {
-            case TREE_WIDGET_ITEM_TYPE_GEOM: return core::COMPONENT_GEOM;
-            case TREE_WIDGET_ITEM_TYPE_TRNG: return core::COMPONENT_TRNG;
-            case TREE_WIDGET_ITEM_TYPE_MESH: return core::COMPONENT_MESH;
-            case TREE_WIDGET_ITEM_TYPE_SOLV: return core::COMPONENT_SOLV;
-            case TREE_WIDGET_ITEM_TYPE_POST: return core::COMPONENT_POST;
+        case TREE_WIDGET_ITEM_TYPE_GEOM: return core::COMPONENT_GEOM;
+        case TREE_WIDGET_ITEM_TYPE_TRNG: return core::COMPONENT_TRNG;
+        case TREE_WIDGET_ITEM_TYPE_MESH: return core::COMPONENT_MESH;
+        case TREE_WIDGET_ITEM_TYPE_SOLV: return core::COMPONENT_SOLV;
+        case TREE_WIDGET_ITEM_TYPE_POST: return core::COMPONENT_POST;
         }
+
+        return core::COMPONENT_ENUM_COUNT;
     }
 
     String TreeWidgetItem::GetTreeItemTypePrefixName(const TreeWidgetItemType type)

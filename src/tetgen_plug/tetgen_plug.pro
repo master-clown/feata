@@ -10,34 +10,37 @@ CONFIG += c++17
 
 DEFINES += TETGEN_PLUG_LIBRARY TETLIBRARY
 
-json_copy.path = $$PWD/../../test/plugins
-json_copy.files += $$files($$PWD/*.json)
-dll_copy.path = $$PWD/../../test/plugins
+# to replace library printf to ours
+DEFINES += _NO_CRT_STDIO_INLINE
+LIBS += -llegacy_stdio_definitions
+QMAKE_CFLAGS += -Dprintf=printf_modified
+QMAKE_CXXFLAGS += -Dprintf=printf_modified
 
 CONFIG(debug, debug|release) {
+    json_copy.path = $$PWD/../../test/plugins_dbg
+    dll_copy.path = $$PWD/../../test/plugins_dbg
     dll_copy.files += $$files($$OUT_PWD/debug/*.dll)
     dll_copy.files += $$files($$OUT_PWD/debug/*.pdb)
 }
 else {
-    dll_copy.files += $$files($$OUT_PWD/release/*.dll)  $$files($$OUT_PWD/debug/*.pdb)
+    json_copy.path = $$PWD/../../test/plugins
+    dll_copy.path = $$PWD/../../test/plugins
+    dll_copy.files += $$files($$OUT_PWD/release/*.dll)
+    dll_copy.files += $$files($$OUT_PWD/release/*.pdb)
 }
 
+json_copy.files += $$files($$PWD/*.json)
 
 INSTALLS += dll_copy
 INSTALLS += json_copy
 
-
-#win32: LIBS += -L$$PWD/../../3rdparty/win/tetgen-1.5.1/lib/ -ltetgen
-#INCLUDEPATH += $$PWD/../../3rdparty/win/tetgen-1.5.1/include
-#DEPENDPATH += $$PWD/../../3rdparty/win/tetgen-1.5.1/include
-
 INCLUDEPATH += $$PWD/../shared
+
+# Tetgen 1.5.1
+include($$PWD/../3rdparty/tetgen-1.5.1/tetgen.pri)
 
 SOURCES += \
         tetgenmeshplug.cpp \
-    predicates.cxx \
-    tetgen.cxx
 
 HEADERS += \
         tetgenmeshplug.hpp \
-    tetgen.h

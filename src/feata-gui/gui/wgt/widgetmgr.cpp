@@ -9,6 +9,7 @@
 #include "gui/wgt/widget_label.hpp"
 #include "gui/wgt/widget_triang.hpp"
 #include "plug/pluginsets.hpp"
+#include "util/log.hpp"
 
 
 namespace gui::wgt
@@ -20,13 +21,17 @@ namespace gui::wgt
                          QGroupBox* plugin_sel_cont,
                          QGroupBox* comp_sel_cont)
     {
-        assert((container_ = container) &&
-               (title_cont_ = title_cont) &&
-               (title_lbl_ = header_title) &&
-               (title_btn_ = btn_start) &&
-               (plugin_sel_cont_ = plugin_sel_cont) &&
-               (comp_sel_cont_ = comp_sel_cont) &&
-               "Widget controls are not supplied.");
+        const auto all_good = (container_ = container) &&
+                              (title_cont_ = title_cont) &&
+                              (title_lbl_ = header_title) &&
+                              (title_btn_ = btn_start) &&
+                              (plugin_sel_cont_ = plugin_sel_cont) &&
+                              (comp_sel_cont_ = comp_sel_cont);
+        if(!all_good)
+        {
+            util::logger::PrintE("Widget controls are not supplied.");
+            return;
+        }
 
         for(auto i = core::COMPONENT_PLUGGABLE_MESH;
             i < core::COMPONENT_PLUGGABLE_ENUM_COUNT;
@@ -231,11 +236,10 @@ namespace gui::wgt
     void WidgetMgr::SetWidgetContTitleText_(const core::Component comp_type,
                                             const String& name)
     {
-        const auto tr { name.trimmed() };
         title_lbl_->setText("%1%2"_qs
                                .arg(core::GetComponentPrefixName(comp_type))
                                .arg((comp_type == core::COMPONENT_GEOM ?
-                                         "" : " \"" + tr + "\"")));
+                                         "" : " \"" + name.trimmed() + "\"")));
     }
 
     void WidgetMgr::SetWidgetTriangTitleText_(const String& name)

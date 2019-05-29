@@ -9,7 +9,7 @@
 #include "plug/pluginsets_types.hpp"
 #include "proj/glob_events.hpp"
 #include "util/log.hpp"
-#include "util/tablewidget.hpp"
+#include "gui/util/tablewidget.hpp"
 
 
 using util::logger::PrintE;

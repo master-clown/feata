@@ -1,4 +1,4 @@
-#include "util/tablewidget.hpp"
+#include "gui/util/tablewidget.hpp"
 #include <QMouseEvent>
 
 

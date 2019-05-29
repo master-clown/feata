@@ -96,7 +96,10 @@ namespace util::logger
         if(gLogType == LOG_TYPE_FILE)
         {
             std::wofstream ofs(gLogFileName.toStdString(), std::ios::app);
-            assert(ofs.is_open());
+            if(!ofs.is_open())
+            {
+                exit(11);
+            }
 
             ofs << str.toStdWString();
             ofs.close();

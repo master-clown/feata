@@ -9,18 +9,21 @@ TEMPLATE = lib
 CONFIG += c++17
 
 
-json_copy.path = $$PWD/../../test/plugins
-json_copy.files += $$files($$PWD/*.json)
-dll_copy.path = $$PWD/../../test/plugins
-
 CONFIG(debug, debug|release) {
+    json_copy.path = $$PWD/../../test/plugins_dbg
+    dll_copy.path = $$PWD/../../test/plugins_dbg
+
     dll_copy.files += $$files($$OUT_PWD/debug/*.dll)
     dll_copy.files += $$files($$OUT_PWD/debug/*.pdb)
 }
 else {
+    json_copy.path = $$PWD/../../test/plugins
+    dll_copy.path = $$PWD/../../test/plugins
     dll_copy.files += $$files($$OUT_PWD/release/*.dll)
-    dll_copy.files += $$files($$OUT_PWD/debug/*.pdb)
+    dll_copy.files += $$files($$OUT_PWD/release/*.pdb)
 }
+
+json_copy.files += $$files($$PWD/*.json)
 
 INSTALLS += dll_copy
 INSTALLS += json_copy

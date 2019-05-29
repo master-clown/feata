@@ -4,7 +4,7 @@
 #include "core/comp_def.hpp"
 #include "plug/plugid_t.hpp"
 #include "stl/map.hpp"
-#include "util/treewidgetitem_type.hpp"
+#include "gui/util/treewidgetitem_type.hpp"
 
 
 namespace gui

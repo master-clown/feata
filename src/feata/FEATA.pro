@@ -3,6 +3,7 @@ TARGET = FEATA
 TEMPLATE = app
 
 CONFIG += c++17
+#CONFIG += force_debug_info
 
 DEFINES += FEATA_APP
 

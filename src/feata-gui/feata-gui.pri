@@ -30,17 +30,18 @@ HEADERS += \
     $$PWD/gui/wgt/widget_string.hpp \
     $$PWD/gui/wgt/widget_strchoice.hpp \
     $$PWD/gui/wgt/widget_geomsel.hpp \
-    $$PWD/util/tablewidget.hpp \
+    $$PWD/gui/util/tablewidget.hpp \
     $$PWD/gui/wgt/basewidgetgeomsel.hpp \
     $$PWD/gui/wgt/widgetmgr.hpp \
     $$PWD/gui/wgt/widget_triang.hpp \
     $$PWD/gui/dlg/filedlg.hpp \
     $$PWD/gui/dlg/mboxdlg.hpp \
-    $$PWD/util/treewidgetitem.hpp \
-    $$PWD/util/treewidgetitem_type.hpp \
+    $$PWD/gui/util/treewidgetitem.hpp \
+    $$PWD/gui/util/treewidgetitem_type.hpp \
     $$PWD/gui/wgt/widget_label.hpp \
     $$PWD/gui/wgt/widgetsetscont.hpp \
-    $$PWD/gui/wgt/widget_geomselstr.hpp
+    $$PWD/gui/wgt/widget_geomselstr.hpp \
+    $$PWD/gui/util/occt_intcontext.hpp
 
 SOURCES += \
     $$PWD/gui/mainwindow.cpp \
@@ -57,15 +58,16 @@ SOURCES += \
     $$PWD/gui/wgt/widget_string.cpp \
     $$PWD/gui/wgt/widget_strchoice.cpp \
     $$PWD/gui/wgt/widget_geomsel.cpp \
-    $$PWD/util/tablewidget.cpp \
+    $$PWD/gui/util/tablewidget.cpp \
     $$PWD/gui/wgt/widgetmgr.cpp \
     $$PWD/gui/wgt/widget_triang.cpp \
     $$PWD/gui/dlg/filedlg.cpp \
     $$PWD/gui/dlg/mboxdlg.cpp \
-    $$PWD/util/treewidgetitem.cpp \
+    $$PWD/gui/util/treewidgetitem.cpp \
     $$PWD/gui/wgt/widget_label.cpp \
     $$PWD/gui/wgt/widgetsetscont.cpp \
-    $$PWD/gui/wgt/widget_geomselstr.cpp
+    $$PWD/gui/wgt/widget_geomselstr.cpp \
+    $$PWD/gui/util/occt_intcontext.cpp
 
 RESOURCES += \
     $$PWD/../../resource/icons.qrc

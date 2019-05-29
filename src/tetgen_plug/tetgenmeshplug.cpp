@@ -20,7 +20,7 @@ struct MeshParams
     double MaxElemVol;
     std::map<int, double> MaxBoundElemFaceArea;
 
-    void FromString(char* max_radedge,
+    bool FromString(std::string& emsg, char* max_radedge,
                     char* max_vol,
                     char* max_area_lst_str);
 
@@ -113,8 +113,9 @@ void TetgenMeshPlug::Mesh()
             goto lbl_free_mem;
         }
 
-    params.FromString(param_maxradedge_str, param_maxvol_str, param_maxfacelst_str);
-    if(!params.IsValid(log_msg))
+
+    if(!params.FromString(log_msg, param_maxradedge_str, param_maxvol_str, param_maxfacelst_str) ||
+       !params.IsValid(log_msg))
     {
         log_msg = PLUGIN_NAME ": mesh parameters error: " + log_msg;
         CallService("loge", &log_msg[0], log_msg.size());
@@ -338,37 +339,60 @@ void ConvertFromTetgen(const tetgenio& in, MeshInfo& out)
     }
 }
 
-void MeshParams::FromString(char* max_radedge,
+bool MeshParams::FromString(std::string& emsg,
+                            char* max_radedge,
                             char* max_vol,
                             char* max_area_lst_str)
 {
     MaxRadEdgeRatio = atof(max_radedge);
     MaxElemVol = atof(max_vol);
 
-    MaxBoundElemFaceArea.clear();
-
-    int maxarea_strsize = strlen(max_area_lst_str);
-    const auto semicln_ptr = strchr(max_area_lst_str, '~');
-    if(!maxarea_strsize || !semicln_ptr)
-        return;
-
-    char* maxarea_str = new char[maxarea_strsize + 1];
-    strcpy_s(maxarea_str, maxarea_strsize + 1, semicln_ptr+1);
-
-    char* ptr_tmp;
-    char* p_str = strtok_s(maxarea_str, "$", &ptr_tmp);
-    while(p_str)
+    if(MaxRadEdgeRatio < DBL_EPSILON ||     // negative too
+       MaxElemVol < DBL_EPSILON)
     {
-        char* ptr_tmp2;
-        char* num_str = strtok_s(p_str, "@", &ptr_tmp2);
-        int id = atoi(num_str);
-        num_str = strtok_s(nullptr, "@", &ptr_tmp2);
-        MaxBoundElemFaceArea[id] = atof(num_str);
-
-        p_str = strtok_s(nullptr, "~", &ptr_tmp);
+        emsg = "invalid values for numeric parameters. They must be positive.";
+        return false;
     }
 
-    delete[] maxarea_str;
+    MaxBoundElemFaceArea.clear();
+
+    if(int maxarea_strsize = strlen(max_area_lst_str))
+    {
+        const auto semicln_ptr = strchr(max_area_lst_str, '~');
+        if(!maxarea_strsize || !semicln_ptr)
+        {
+            emsg = "invalid string of maximum element boundary faces area.";
+            return false;
+        }
+
+        char* maxarea_str = new char[maxarea_strsize + 1];
+        strcpy_s(maxarea_str, maxarea_strsize + 1, semicln_ptr+1);
+
+        char* ptr_tmp;
+        char* p_str = strtok_s(maxarea_str, "$", &ptr_tmp);
+        while(p_str)
+        {
+            char* ptr_tmp2;
+            char* num_str = strtok_s(p_str, "@", &ptr_tmp2);
+            int id = atoi(num_str);
+
+            num_str = strtok_s(nullptr, "@", &ptr_tmp2);
+            double num;
+            if(!num_str || (num = atof(num_str)) < DBL_EPSILON)
+            {
+                emsg = "area for face '" + std::to_string(id) + "' is not positive or not specified.";
+                return false;
+            }
+
+            MaxBoundElemFaceArea[id] = num;
+
+            p_str = strtok_s(nullptr, "$", &ptr_tmp);
+        }
+
+        delete[] maxarea_str;
+    }
+
+    return true;
 }
 
 bool MeshParams::IsValid(std::string& error_msg)
@@ -413,6 +437,25 @@ const char* TetGenErrorCodeToString(const TetGenErrorCode code)
     }
 
     return nullptr;
+}
+
+extern "C" int printf_modified(const char *fmt, ...)
+{
+   va_list argp;
+   va_start(argp, fmt);
+
+   int ret = vsnprintf(nullptr, 0, fmt, argp);
+   if(ret <= 0)
+       return ret;
+
+   va_end(argp);
+   va_start(argp, fmt);
+
+   std::string buf(ret+1, '\0');
+   ret = vsnprintf(&buf[0], ret+1, fmt, argp);
+   gStatsBuf += buf.c_str();
+
+   return ret;
 }
 
 #ifdef _WIN32

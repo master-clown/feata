@@ -198,10 +198,10 @@ namespace mesh
 
         txt = "Basic information:\n"
               "\tNumber of nodes: %1\n"
-              "\tNumber of elements: %2\n"_qs
+              "\tNumber of elements: %2\n%3"_qs
               .arg(mshr->GetMesh()->NodeNum)
               .arg(mshr->GetMesh()->ElemNum)
-              .arg(detail.isEmpty() ? "" : ("\nDetailed information:\n" + detail));
+              .arg(detail.isEmpty() ? "" : ("\nDetailed information and log:\n" + detail));
 
         return true;
     }

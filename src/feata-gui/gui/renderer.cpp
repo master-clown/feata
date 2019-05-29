@@ -1,6 +1,5 @@
 #include "gui/renderer.hpp"
 #include <AIS_ColorScale.hxx>
-#include <AIS_InteractiveContext.hxx>
 #include <AIS_InteractiveObject.hxx>
 #include <AIS_RubberBand.hxx>
 #include <AIS_Shape.hxx>
@@ -23,9 +22,11 @@
 #include "geom/rect.hpp"
 #include "gui/inputmgr.hpp"
 #include "gui/renderlist.hpp"
+#include "gui/util/occt_intcontext.hpp"
 #include "mesh/meshvis.hpp"
 #include "post/nsolmeshvis.hpp"
 #include "proj/glob_events.hpp"
+
 
 #if defined(FEATA_SYSTEM_WIN)
     #include <WNT_Window.hxx>
@@ -52,7 +53,7 @@ namespace gui
         Handle(V3d_DirectionalLight) LightDirnlMain;
         Handle(Aspect_Window) Wnd;
         Handle(V3d_View) View;
-        Handle(AIS_InteractiveContext) Context;
+        Handle(OcctInteractiveContext) Context;
         Handle(AIS_RubberBand) SelRect;
         RenderList RenderLst;
         RenderObjType CurrRenObjsType = RENDER_OBJ_TYPE_NONE;
@@ -187,9 +188,10 @@ namespace gui
         else
         if(new_objs & RENDER_OBJ_TYPE_MESH)
         {
-            const auto mdl = ren_lst.GetCurrentMesh()->GetOCCMesh();
-            if(mdl)
+            const auto msh = ren_lst.GetCurrentMesh();
+            if(msh)
             {
+                const auto mdl = msh->GetOCCMesh();
                 scene_->Context->Display(scene_->ObjectLst[RENDER_OBJ_TYPE_MESH] = mdl, true);
                 res |= RENDER_OBJ_TYPE_MESH;
             }
@@ -529,7 +531,7 @@ namespace gui
 #endif
         View->SetWindow(Wnd);
         if (!Wnd->IsMapped()) Wnd->Map();
-        Context = new AIS_InteractiveContext(Viewer);
+        Context = new OcctInteractiveContext(Viewer);
             Context->SetDisplayMode(AIS_DisplayMode::AIS_Shaded, Standard_True);
             Context->DefaultDrawer()->SetFaceBoundaryDraw(true);
             Context->DefaultDrawer()->FaceBoundaryAspect()->SetColor(Quantity_NOC_BLACK);
