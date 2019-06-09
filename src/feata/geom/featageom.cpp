@@ -139,10 +139,8 @@ namespace geom
         return true;
     }
 
-    bool FeataGeom::ConvertToTriangulation(mdl::ShapeTriangulation* prev_tr,
-                                           mdl::ShapeTriangulation*& tr) const
+    bool FeataGeom::ConvertToTriangulation(mdl::ShapeTriangulation*& tr) const
     {
-        SAFE_DEL(prev_tr);
         tr = nullptr;
 
         const TopoDS_Shape* sh;

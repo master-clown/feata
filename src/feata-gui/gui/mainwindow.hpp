@@ -182,7 +182,7 @@ namespace gui
         void UnloadSolver();        // here all results will be cleared as well
         void UnloadSolverPlugs();
 
-        void ShowActiveMesher();
+        void ShowActiveMesher(const bool is_result);
         void ShowActiveSolver();
         void ShowActivePostpr();
 

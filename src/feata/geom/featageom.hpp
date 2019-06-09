@@ -22,8 +22,7 @@ namespace geom
         void Clear();
 
         bool StartPolygonize(util::ParallelTask*& ptask);
-        bool ConvertToTriangulation(mdl::ShapeTriangulation* prev_tr,
-                                    mdl::ShapeTriangulation*& tr) const;
+        bool ConvertToTriangulation(mdl::ShapeTriangulation*& tr) const;
 
         void RemovePolygonizedModel();
 

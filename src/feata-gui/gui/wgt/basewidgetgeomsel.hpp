@@ -12,11 +12,13 @@ namespace gui::wgt
     public:
         BaseWidgetGeomSel(QWidget* parent = nullptr);
 
-        virtual void SetSelectionState(const bool is_on);
         virtual void SetGeomSelType(const geom::GeomEntityType geom_type);
 
         virtual bool GetSelectionState() const;
         virtual geom::GeomEntityType GetGeomSelType() const;
+
+    public slots:
+        virtual void SetSelectionState(const bool is_on);
 
     signals:
         /**

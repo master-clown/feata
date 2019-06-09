@@ -62,7 +62,7 @@ namespace mesh
         List<int>   GetMesherNames() const;
 
         MeshingStatus GetMeshingStatus(const int mesher_id) const;
-        bool GetMeshStatistics(const int mesher_id, String& txt) const;
+        bool GetMeshStatistics(const int mesher_id, const bool detailed, String& txt) const;
 
         const plug::PluginInfo* GetPluginInfo(const plug::plugid_t id) const;
 

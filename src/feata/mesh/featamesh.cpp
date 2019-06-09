@@ -187,7 +187,9 @@ namespace mesh
         return static_cast<MesherPlugin*>(pl->PluginPtr)->GetMeshingStatus();
     }
 
-    bool FeataMesh::GetMeshStatistics(const int mesher_id, String& txt) const
+    bool FeataMesh::GetMeshStatistics(const int mesher_id,
+                                      const bool detailed,
+                                      String& txt) const
     {
         const auto& mshr = mesher_lst_[mesher_id].mesher;
         auto pl = mesh_pmgr_->GetById(mshr->GetPlugin());
@@ -201,7 +203,7 @@ namespace mesh
               "\tNumber of elements: %2\n%3"_qs
               .arg(mshr->GetMesh()->NodeNum)
               .arg(mshr->GetMesh()->ElemNum)
-              .arg(detail.isEmpty() ? "" : ("\nDetailed information and log:\n" + detail));
+              .arg(detail.isEmpty() || !detailed ? "" : ("\nDetailed information and log:\n" + detail));
 
         return true;
     }

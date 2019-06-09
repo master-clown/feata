@@ -377,21 +377,20 @@ namespace gui
         curr_par_task_ = new util::ParallelTask(
         [this](const QAtomicInt&)
         {
-            if(auto ptr = proj_->GetMesh()->GetCurrentGeometry();
-               !ptr || proj_->GetGeometry()->IsDirty())
+            auto ptr = proj_->GetMesh()->GetCurrentGeometry();
+            SAFE_DEL(ptr);
+
+            if(!proj_->GetGeometry()->ConvertToTriangulation(ptr))
             {
-                if(!proj_->GetGeometry()->ConvertToTriangulation(ptr, ptr))
-                {
-                    proj_->GetMesh()->SetCurrentGeometry(nullptr);
-                    return;
-                }
-
-                Print("Conversion of the shape to triangle data has finished. The shape is described by "
-                      "%1 vertices and %2 triangles. Starting meshing..."_qs.arg(ptr->NodeLst.size() / 3)
-                      .arg(ptr->FaceTriaLst.size()));
-
-                proj_->GetMesh()->SetCurrentGeometry(ptr);
+                proj_->GetMesh()->SetCurrentGeometry(nullptr);
+                return;
             }
+
+            Print("Conversion of the shape to triangle data has finished. The shape is described by "
+                  "%1 vertices and %2 triangles. Starting meshing..."_qs.arg(ptr->NodeLst.size() / 3)
+                  .arg(ptr->FaceTriaLst.size()));
+
+            proj_->GetMesh()->SetCurrentGeometry(ptr);
         });
         curr_par_task_->SetOnFinishedFunc(          // executes in the UI thread
         [this]()
@@ -403,6 +402,8 @@ namespace gui
                 UnlockGui();
                 return;
             }
+
+            Print("Starting meshing '%1'..."_qs.arg(active_item_->text(0)));
 
             // have to set this right prior to thread lauch and unset if none happened.
             proj::globj::gCurrentComponent = core::COMPONENT_PLUGGABLE_MESH;
@@ -438,6 +439,8 @@ namespace gui
 
         // have to set this right prior to thread lauch and unset if none happened.
         proj::globj::gCurrentComponent = core::COMPONENT_PLUGGABLE_SOLV;
+
+        Print("Starting solving '%1'..."_qs.arg(active_item_->text(0)));
 
         if(!proj_->GetSolver()->StartSolv(active_item_->GetId(), curr_par_task_))
         {
@@ -484,14 +487,25 @@ namespace gui
             return;
         }
 
-        Print("Mesher '%1' has finished."_qs.arg(item->text(0)));
+        String stats;
+        proj_->GetMesh()->GetMeshStatistics(item->GetId(), false, stats);
+
+        Print("Mesher '%1' has finished. %2"_qs.arg(item->text(0)).arg(stats));
 
         ui->renderView->GetRenderer()->GetRenderList().
                 SetCurrentMesh(proj_->GetMesh()->GetMeshVis(item->GetId()));
 
         ui->projectTree->clearSelection();
-        item->setSelected(true);
+
+        auto res_it = item->childCount() ? static_cast<TreeWidgetItem*>(item->child(0))
+                                         : new TreeWidgetItem(item, TREE_WIDGET_ITEM_TYPE_MESH);
+        res_it->SetDep(item->GetId(), TREE_WIDGET_ITEM_TYPE_MESH);
+        res_it->setText(0, "Result");
+
+        res_it->setSelected(true);
+        res_it->SetReadyIcon(true);
         item->SetReadyIcon(true);
+        item->setExpanded(true);
 
         UnlockGui();
     }
@@ -513,6 +527,8 @@ namespace gui
             UnlockGui();
             return;
         }
+
+        item->SetReadyIcon(true);
 
         Print("Solver '%1' has finished."_qs.arg(item->text(0)));
 
@@ -611,7 +627,7 @@ namespace gui
         }
     }
 
-    void MainWindow::ShowActiveMesher()
+    void MainWindow::ShowActiveMesher(const bool is_result)
     {
         auto item = active_inst_lst_[core::COMPONENT_PLUGGABLE_MESH];
 
@@ -619,17 +635,17 @@ namespace gui
 
         active_item_ = nullptr;     // to forbide change of settings
             ui->cbHeaderCompPlugin->setCurrentIndex(ui->cbHeaderCompPlugin->findData(item->GetPluginId()));
-        active_item_ = item;
-
-        RemWndState(MAIN_WND_STATE_SHOW_ENUMMASK);
-        if(!(wnd_state_ & MAIN_WND_STATE_SHOW_MESH))
-        {
-            AddWndState(proj_->GetMesh()->HasMeshVis(item->GetId()) ?
-                            MAIN_WND_STATE_SHOW_MESH : MAIN_WND_STATE_SHOW_SHAPE);
-        }
+        active_item_ = item;        
 
         wgt_mgr_->SetHeaderStyle(core::COMPONENT_MESH, item->text(0));
-        wgt_mgr_->ShowWidgetCont(core::COMPONENT_PLUGGABLE_MESH, item->GetId());
+        if(!is_result)
+            wgt_mgr_->ShowWidgetCont(core::COMPONENT_PLUGGABLE_MESH, item->GetId());
+        else
+            wgt_mgr_->HideWidget();
+
+        RemWndState(MAIN_WND_STATE_SHOW_ENUMMASK);
+        AddWndState(is_result && proj_->GetMesh()->HasMeshVis(item->GetId()) ?
+                        MAIN_WND_STATE_SHOW_MESH : MAIN_WND_STATE_SHOW_SHAPE);
     }
 
     void MainWindow::ShowActiveSolver()
@@ -644,14 +660,14 @@ namespace gui
             ui->cbHeaderDepComp->setCurrentIndex(ui->cbHeaderDepComp->findData(item->GetDepId()));
         active_item_ = item;
 
+        wgt_mgr_->SetHeaderStyle(core::COMPONENT_SOLV, item->text(0));
+        wgt_mgr_->ShowWidgetCont(core::COMPONENT_PLUGGABLE_SOLV, item->GetId());
+
         RemWndState(MAIN_WND_STATE_SHOW_ENUMMASK);
         if(!(wnd_state_ & MAIN_WND_STATE_SHOW_SHAPE))
         {
             AddWndState(MAIN_WND_STATE_SHOW_SHAPE);
         }
-
-        wgt_mgr_->SetHeaderStyle(core::COMPONENT_SOLV, item->text(0));
-        wgt_mgr_->ShowWidgetCont(core::COMPONENT_PLUGGABLE_SOLV, item->GetId());
     }
 
     void MainWindow::ShowActivePostpr()
@@ -663,12 +679,12 @@ namespace gui
         auto sv = proj_->GetPostpr()->GetSolVis(sid, dsid);
         ui->renderView->GetRenderer()->GetRenderList().SetCurrentNodalSol(sid, dsid, sv);
 
-        this->RemWndState(MAIN_WND_STATE_SHOW_ENUMMASK);
-        if(sv)
-            this->AddWndState(MAIN_WND_STATE_SHOW_SOLU);
-
         wgt_mgr_->SetHeaderStyle(core::COMPONENT_POST, item->text(0));
         wgt_mgr_->HideWidget();
+
+        RemWndState(MAIN_WND_STATE_SHOW_ENUMMASK);
+        if(sv)
+            AddWndState(MAIN_WND_STATE_SHOW_SOLU);
     }
 
     void MainWindow::LoadPlugin(const core::ComponentPluggable comp)
@@ -811,6 +827,19 @@ namespace gui
     void MainWindow::ActiveCompBecameDirty()
     {
         active_item_->SetReadyIcon(false);
+        if(auto ch = dynamic_cast<TreeWidgetItem*>(active_item_->child(0)))
+            ch->SetReadyIcon(false);
+
+        if(active_item_->GetType() == TREE_WIDGET_ITEM_TYPE_MESH)       // have to make dirty all dependant solvers
+        {
+            const auto mesh_id = active_item_->GetId();
+            for(int i = 1; i < tree_main_item_lst_[PROJ_TREE_MAIN_ITEM_SOLVER]->childCount(); ++i)      // without 'Plugin'
+                if(auto ch = static_cast<TreeWidgetItem*>(tree_main_item_lst_[PROJ_TREE_MAIN_ITEM_SOLVER]->child(i));
+                   ch->GetDepId() == mesh_id)
+                {
+                    ch->SetReadyIcon(false);
+                }
+        }
     }
 
     void MainWindow::RefillPluginComboBox(const core::ComponentPluggable comp)
@@ -955,15 +984,15 @@ namespace gui
         else
         if(item == tree_main_item_lst_[PROJ_TREE_MAIN_ITEM_GEOM])
         {
+            wgt_mgr_->SetHeaderStyle(core::COMPONENT_GEOM, "");
+            wgt_mgr_->HideWidget();
+
             RemWndState(MAIN_WND_STATE_SHOW_ENUMMASK);
             if(!(wnd_state_ & MAIN_WND_STATE_SHOW_SHAPE) &&
                proj_->GetGeometry()->HasModel())
             {
                 AddWndState(MAIN_WND_STATE_SHOW_SHAPE);
             }
-
-            wgt_mgr_->SetHeaderStyle(core::COMPONENT_GEOM, "");
-            wgt_mgr_->HideWidget();
         }
         else
         if(item == tree_main_item_lst_[PROJ_TREE_MAIN_ITEM_GEOM_TRIAN] ||
@@ -980,15 +1009,15 @@ namespace gui
 
             active_item_ = ch;
 
+            wgt_mgr_->SetHeaderStyle(core::COMPONENT_TRNG, ch->text(0));
+            wgt_mgr_->ShowWidgetTriang(ch->GetId());
+
             RemWndState(MAIN_WND_STATE_SHOW_ENUMMASK);
             if(!(wnd_state_ & MAIN_WND_STATE_SHOW_TRIAN) &&
                proj_->GetGeometry()->HasPolygonizedModel())
             {
                 AddWndState(MAIN_WND_STATE_SHOW_TRIAN);
             }
-
-            wgt_mgr_->SetHeaderStyle(core::COMPONENT_TRNG, ch->text(0));
-            wgt_mgr_->ShowWidgetTriang(ch->GetId());
         }
         else
         if(item == tree_main_item_lst_[PROJ_TREE_MAIN_ITEM_MESH])
@@ -1001,7 +1030,7 @@ namespace gui
                 return;
             }
 
-            ShowActiveMesher();
+            //ShowActiveMesher();
         }
         else
         if(item == tree_main_item_lst_[PROJ_TREE_MAIN_ITEM_SOLVER])
@@ -1038,19 +1067,15 @@ namespace gui
         if(item->parent() == tree_main_item_lst_[PROJ_TREE_MAIN_ITEM_MESH])
         {
             auto cast = static_cast<TreeWidgetItem*>(item);
-            if(!cast)
-                return;
 
             active_item_ = active_inst_lst_[core::COMPONENT_PLUGGABLE_MESH] = cast;
 
-            ShowActiveMesher();
+            ShowActiveMesher(false);
         }
         else
         if(item->parent() == tree_main_item_lst_[PROJ_TREE_MAIN_ITEM_SOLVER])
         {
             auto cast = static_cast<TreeWidgetItem*>(item);
-            if(!cast)
-                return;
 
             active_item_ = active_inst_lst_[core::COMPONENT_PLUGGABLE_SOLV] = cast;
 
@@ -1060,8 +1085,6 @@ namespace gui
         if(item->parent() && item->parent()->parent() == tree_main_item_lst_[PROJ_TREE_MAIN_ITEM_RESULT])  // some postpr
         {
             auto cast = static_cast<TreeWidgetItem*>(item);
-            if(!cast)
-                return;
 
             active_item_ = active_inst_lst_[core::COMPONENT_PLUGGABLE_POST] = cast;
 
@@ -1072,15 +1095,21 @@ namespace gui
            item->parent() == tree_main_item_lst_[PROJ_TREE_MAIN_ITEM_SOLVER_PLUGIN])
         {
             auto cast = static_cast<TreeWidgetItem*>(item);
-            if(!cast)
-            {
-                wgt_mgr_->HideHeader();
-                wgt_mgr_->HideWidget();
-                return;
-            }
+//            if(!cast)
+//            {
+//                wgt_mgr_->HideHeader();
+//                wgt_mgr_->HideWidget();
+//                return;
+//            }
 
             wgt_mgr_->HideHeader();
             wgt_mgr_->ShowWidgetPlug((active_item_ = cast)->GetId());
+        }
+        else
+        if(item->parent() && item->parent()->parent() == tree_main_item_lst_[PROJ_TREE_MAIN_ITEM_MESH])     // mesh result
+        {
+            active_item_ = active_inst_lst_[core::COMPONENT_PLUGGABLE_MESH] = static_cast<TreeWidgetItem*>(item->parent());
+            ShowActiveMesher(true);
         }
         else
         {}
@@ -1249,6 +1278,8 @@ namespace gui
 
         LockGui();
 
+        proj_->GetGeometry()->RemovePolygonizedModel();
+
         wgt_mgr_->RemoveWidgetTriang(item->GetId());
         item->parent()->removeChild(item);
         delete item;
@@ -1308,7 +1339,7 @@ namespace gui
     void MainWindow::OnTreeMeshInstPrintStats(TreeWidgetItem* item)
     {
         String stats;
-        if(!proj_->GetMesh()->GetMeshStatistics(item->GetId(), stats))
+        if(!proj_->GetMesh()->GetMeshStatistics(item->GetId(), true, stats))
             return;
 
         Print("\t\t\tMESH '%1' STATISTICS\n"_qs.arg(item->text(0)) + stats);

@@ -45,6 +45,13 @@ bool TetElem::Init(const uint i_elem,
 Mat TetElem::BuildStifMat() const
 {
     Mat B = Mat::Zero(6, 3*4);
+    BuildShapeFuncDerMat(B);
+
+    return (V6_/6.) * B.transpose() * D_ * B;
+}
+
+void TetElem::BuildShapeFuncDerMat(Mat& B) const
+{
     for(int i = 0; i < 4; ++i)
     {
         B(0, 0 + 3*i) = b_[i];
@@ -59,6 +66,31 @@ Mat TetElem::BuildStifMat() const
     }
 
     B /= V6_;
+}
 
-    return (V6_/6.) * B.transpose() * D_ * B;
+void TetElem::BuildShapeFuncDerRow(Vec& row, const int idx) const
+{
+    switch(idx)
+    {
+    case 0: for(int i=0;i<4;++i) row(0 + 3*i) = b_[i]; break;
+    case 1: for(int i=0;i<4;++i) row(1 + 3*i) = c_[i]; break;
+    case 2: for(int i=0;i<4;++i) row(2 + 3*i) = d_[i]; break;
+    case 3: for(int i=0;i<4;++i){row(0 + 3*i) = c_[i]; row(1 + 3*i) = b_[i];} break;
+    case 4: for(int i=0;i<4;++i){row(1 + 3*i) = d_[i]; row(2 + 3*i) = c_[i];} break;
+    case 5: for(int i=0;i<4;++i){row(0 + 3*i) = d_[i]; row(2 + 3*i) = b_[i];} break;
+    default: return;
+    }
+
+    row /= V6_;
+}
+
+Mat TetElem::BuildIsoMatHookeTensor(const real e_modulus,
+                                    const real nu)
+{
+    Mat m = Mat::Zero(6, 6);
+    m(0, 0) = m(1, 1) = m(2, 2) = 1 - nu;
+    m(3, 3) = m(4, 4) = m(5, 5) = 0.5 - nu;
+    m(0, 1)=m(1, 0) = m(0, 2)=m(2, 0) = m(1, 2)=m(1, 2) = nu;
+
+    return e_modulus / ((1 + nu)*(1 - 2*nu)) * m;
 }

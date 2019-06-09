@@ -29,6 +29,8 @@ SolvPlugin::SolvPlugin()
 
 SolvPlugin::~SolvPlugin()
 {
+    if(solv_params_) delete solv_params_;
+
     const std::string msg = "Plugin '" PLUGIN_NAME "' has been unloaded.";
     CallService("log", msg.c_str(), msg.size());
 }
@@ -73,7 +75,6 @@ int SolvPlugin::Init(const ServiceInfo service_lst[],
 
 void SolvPlugin::Solve()
 {
-    SolvParams params;
     std::string log_msg;
     char *young_str = nullptr, *poisn_str = nullptr, *face_bclst_str = nullptr;
     unsigned int young_len, poisn_len, face_bclst_size;
@@ -143,7 +144,8 @@ void SolvPlugin::Solve()
             goto lbl_free_mem;
         }
 
-    if(!params.FromString(young_str, poisn_str, face_bclst_str, log_msg))
+    if(!solv_params_) solv_params_ = new SolvParams();
+    if(!solv_params_->FromString(young_str, poisn_str, face_bclst_str, log_msg))
     {
         log_msg = PLUGIN_NAME ": input parameters error: " + log_msg;
         CallService("loge", &log_msg[0], log_msg.size());
@@ -153,7 +155,7 @@ void SolvPlugin::Solve()
 
     stats_buf.clear();
 
-    if(!Solve_(params, log_msg))
+    if(!Solve_(log_msg))
     {
         if(!log_msg.empty())
             CallService("loge", &log_msg[0], log_msg.size());
@@ -208,9 +210,26 @@ const char* SolvPlugin::ListRequiredSettings() const
     return gSetsStr.c_str();
 }
 
+// "id1$name1$desc1~id2$name2$desc2~..."
+// id > 2 for strains and stresses
 const char* SolvPlugin::GetNodalDataSetList() const
 {
-    return "1$X-component of stress$~2$X-component of displacement$";
+    return "1$X-component of displacement$~"
+           "2$Y-component of displacement$~"
+           "3$Z-component of displacement$~"
+           "4$Total displacement$~"
+           "5$X-component of strain$~"
+           "6$Y-component of strain$~"
+           "7$Z-component of strain$~"
+           "8$XY-component of strain$~"
+           "9$YZ-component of strain$~"
+           "10$ZX-component of strain$~"
+           "11$X-component of stress$~"
+           "12$Y-component of stress$~"
+           "13$Z-component of stress$~"
+           "14$XY-component of stress$~"
+           "15$YZ-component of stress$~"
+           "16$ZX-component of stress$";
 }
 
 bool SolvPlugin::IsCancelPossible() const { return false; }
@@ -275,6 +294,8 @@ bool SolvParams::FromString(const char* young, const char* poisn, const char* bc
     char* bcstr_spl = new char[bc_lst_len + 1];             // just want to recall C-strings
     strcpy_s(bcstr_spl, bc_lst_len + 1, geom_type_end+1);
 
+    BcLst.clear();
+
     char* ptr_tmp;
     char* p_str = strtok_s(bcstr_spl, "$", &ptr_tmp);
     while(p_str)
@@ -293,6 +314,8 @@ bool SolvParams::FromString(const char* young, const char* poisn, const char* bc
 
         p_str = strtok_s(nullptr, "$", &ptr_tmp);
     }
+
+    delete[] bcstr_spl;
 
     return true;
 }
@@ -405,25 +428,26 @@ bool BCond::Parse(const GeomType type,
 
 #ifdef _WIN32
 
-    #include <Windows.h>
+#include <Windows.h>
 
 
-    static HINSTANCE gDllHandle = nullptr;
+static HINSTANCE gDllHandle = nullptr;
 
-    std::wstring GetLibDir()
-    {
-        wchar_t buffer[MAX_PATH];
+std::wstring GetLibDir()
+{
+    wchar_t buffer[MAX_PATH];
 
-        GetModuleFileName(gDllHandle, buffer, MAX_PATH);
+    GetModuleFileName(gDllHandle, buffer, MAX_PATH);
 
-        const auto pos = std::wstring(buffer).find_last_of(L"\\/");
+    const auto pos = std::wstring(buffer).find_last_of(L"\\/");
 
-        return pos == std::wstring::npos ? L"" : std::wstring(buffer).substr(0, pos+1);
-    }
+    return pos == std::wstring::npos ? L"" : std::wstring(buffer).substr(0, pos+1);
+}
 
-    BOOL WINAPI DllMain(_In_ HINSTANCE hinstDLL, _In_ DWORD, _In_ LPVOID)
-    {
-        gDllHandle = hinstDLL;
-        return TRUE;
-    }
+BOOL WINAPI DllMain(_In_ HINSTANCE hinstDLL, _In_ DWORD, _In_ LPVOID)
+{
+    gDllHandle = hinstDLL;
+    return TRUE;
+}
+
 #endif

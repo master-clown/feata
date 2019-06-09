@@ -9,27 +9,32 @@ TEMPLATE = lib
 CONFIG += c++17
 
 
-CONFIG(debug, debug|release) {
-    json_copy.path = $$PWD/../../test/plugins_dbg
-    dll_copy.path = $$PWD/../../test/plugins_dbg
+# 3RD-PARTY
 
-    dll_copy.files += $$files($$OUT_PWD/debug/*.dll)
-    dll_copy.files += $$files($$OUT_PWD/debug/*.pdb)
-}
-else {
-    json_copy.path = $$PWD/../../test/plugins
-    dll_copy.path = $$PWD/../../test/plugins
-    dll_copy.files += $$files($$OUT_PWD/release/*.dll)
-    dll_copy.files += $$files($$OUT_PWD/release/*.pdb)
-}
-
-json_copy.files += $$files($$PWD/*.json)
-
-INSTALLS += dll_copy
-INSTALLS += json_copy
-
-
+## Eigen
 INCLUDEPATH += $$PWD/../../3rdparty/cross/eigen-3.3.7/include
+
+
+# Install routine (to speed up testing)
+
+#CONFIG(debug, debug|release) {
+#    json_copy.path = $$PWD/../../test/plugins_dbg
+#    dll_copy.path = $$PWD/../../test/plugins_dbg
+
+#    dll_copy.files += $$files($$OUT_PWD/debug/*.dll)
+#    dll_copy.files += $$files($$OUT_PWD/debug/*.pdb)
+#}
+#else {
+#    json_copy.path = $$PWD/../../test/plugins
+#    dll_copy.path = $$PWD/../../test/plugins
+#    dll_copy.files += $$files($$OUT_PWD/release/*.dll)
+#    dll_copy.files += $$files($$OUT_PWD/release/*.pdb)
+#}
+
+#json_copy.files += $$files($$PWD/*.json)
+
+#INSTALLS += dll_copy
+#INSTALLS += json_copy
 
 INCLUDEPATH += $$PWD/../shared
 

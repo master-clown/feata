@@ -23,8 +23,7 @@ static void ApplyBc(const MeshInfo* mesh,
                     SpVec& rhs);
 static std::string SolvStatusToStr(const Eigen::ComputationInfo st);
 
-bool SolvPlugin::Solve_(const SolvParams &params,
-                        std::string& log_buf)
+bool SolvPlugin::Solve_(std::string& log_buf)
 {
     const auto node_lst = solv_info_->Mesh->NodeLst;
     const auto elem_lst = solv_info_->Mesh->ElemLst;
@@ -34,7 +33,7 @@ bool SolvPlugin::Solve_(const SolvParams &params,
     const auto dof_count = 3 * node_num;
 
     TetElem tet_el(log_buf);
-    Mat K_loc, M_loc;
+    Mat K_loc;
     Mat node_mat = Mat::Zero(4, 3);
 
     const size_t K_lst_size = elem_num * 4 * 4 * 3 * 3;
@@ -59,7 +58,7 @@ bool SolvPlugin::Solve_(const SolvParams &params,
             for(int i_coord = 0; i_coord < 3; ++i_coord)
                 node_mat(i_node, i_coord) = node_lst[3*(elem_lst[4*i_el + i_node] - 1) + i_coord];
 
-        if(!tet_el.Init(i_el, node_mat, params.Young, params.Poisn))
+        if(!tet_el.Init(i_el, node_mat, solv_params_->Young, solv_params_->Poisn))
             return false;
 
         K_loc = tet_el.BuildStifMat();
@@ -89,7 +88,7 @@ bool SolvPlugin::Solve_(const SolvParams &params,
 
     SpVec F(dof_count);
 
-    ApplyBc(solv_info_->Mesh, params, K, F);
+    ApplyBc(solv_info_->Mesh, *solv_params_, K, F);
 
     Eigen::SimplicialLDLT<SpMat> solver;
 

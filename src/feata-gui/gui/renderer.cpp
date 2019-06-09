@@ -208,9 +208,8 @@ namespace gui
                 scene_->ColorScale->SetNumberOfIntervals(3);
                 scene_->ColorScale->SetColors(builder->GetColorMap());
 
-                scene_->Context->Display(scene_->ObjectLst[RENDER_OBJ_TYPE_SOLU] = mdl, true);
+                scene_->Context->Display(scene_->ObjectLst[RENDER_OBJ_TYPE_SOLU] = mdl, false);
                 scene_->Context->Display(scene_->ColorScale, true);
-                scene_->Context->CurrentViewer()->RedrawImmediate();
                 res |= RENDER_OBJ_TYPE_SOLU;
             }
         }
@@ -257,7 +256,7 @@ namespace gui
         {
             if(auto obj = scene_->ObjectLst.take(RENDER_OBJ_TYPE_SOLU))
             {
-                scene_->Context->Remove(scene_->ColorScale, true);
+                scene_->Context->Remove(scene_->ColorScale, false);
                 scene_->Context->Remove(obj, true);
                 res |= RENDER_OBJ_TYPE_SOLU;
             }

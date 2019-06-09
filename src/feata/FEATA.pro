@@ -8,12 +8,13 @@ CONFIG += c++17
 DEFINES += FEATA_APP
 
 
-# 3RD PARTY
+# 3RD-PARTY
 
 unix:!macx {
 }
 
 win32 {
+    # Open Cascade
     DEPENDPATH += $$PWD/../../3rdparty/win/opencascade-7.3.0/include
     INCLUDEPATH += $$PWD/../../3rdparty/win/opencascade-7.3.0/include
     LIBS += -L$$PWD/../../3rdparty/win/opencascade-7.3.0/lib/ -lTKMath -lTKBRep -lTKTopAlgo -lTKGeomBase  \

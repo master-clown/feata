@@ -27,7 +27,6 @@ namespace gui::wgt
         bool ToPlugSettValue(plug::PluginSettingValue& val) const override;
         bool IsValid() const override;
 
-
     protected:
         QLabel* title_lbl_;
         QLabel* desc_lbl_;

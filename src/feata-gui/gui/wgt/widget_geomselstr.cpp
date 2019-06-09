@@ -245,7 +245,6 @@ namespace gui::wgt
 
     void WidgetGeomSelStr::hideEvent(QHideEvent* ev)
     {
-#pragma message("It's not enough. We have to disable selection before the geometry changes. Hiding happens after")
         Base::hideEvent(ev);
         group_box_->setChecked(false);
     }

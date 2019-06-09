@@ -6,7 +6,33 @@
 #include "plug/solverplugin.h"
 
 
-struct SolvParams;
+struct BCond
+{
+    enum GeomType
+    {
+        Node, Edge, Face
+    };
+    struct bc_t
+    {
+        double Value;
+        char Tag[4] = {0};    // [0] = 'u','f','p'; any of [1-3] > 0 if 'x','y''z' resp. are specified in input
+    };
+
+    GeomType GeType;
+    std::list<bc_t> BcLst;
+
+    bool Parse(const GeomType type, const char* str, std::string& emsg);
+
+};
+
+struct SolvParams
+{
+    double Young;
+    double Poisn;
+    std::map<int, BCond> BcLst;
+
+    bool FromString(const char* young, const char* poisn, const char* bc_lst, std::string& emsg);
+};
 
 class SolvPlugin
         : public SolverPlugin
@@ -45,42 +71,13 @@ private:
     const ServiceInfo* serv_lst_;
     unsigned int serv_num_;
     const SolvInfo* solv_info_ = nullptr;
+    SolvParams* solv_params_ = nullptr;
 
     std::string stats_buf;
     std::atomic<SolvStatus> status_;
     std::atomic<bool> stop_flag_ = false;
 
-    bool Solve_(const SolvParams& params,
-                std::string& log_buf);
+    bool Solve_(std::string& log_buf);
 };
 
 DECL_CREATE_FREE_PLUG_ROUTINES
-
-
-struct BCond
-{
-    enum GeomType
-    {
-        Node, Edge, Face
-    };
-    struct bc_t
-    {
-        double Value;
-        char Tag[4] = {0};    // [0] = 'u','f','p'; any of [1-3] > 0 if 'x','y''z' resp. are specified in input
-    };
-
-    GeomType GeType;
-    std::list<bc_t> BcLst;
-
-    bool Parse(const GeomType type, const char* str, std::string& emsg);
-
-};
-
-struct SolvParams
-{
-    double Young;
-    double Poisn;
-    std::map<int, BCond> BcLst;
-
-    bool FromString(const char* young, const char* poisn, const char* bc_lst, std::string& emsg);
-};

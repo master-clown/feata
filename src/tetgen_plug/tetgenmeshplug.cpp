@@ -381,6 +381,7 @@ bool MeshParams::FromString(std::string& emsg,
             if(!num_str || (num = atof(num_str)) < DBL_EPSILON)
             {
                 emsg = "area for face '" + std::to_string(id) + "' is not positive or not specified.";
+                delete[] maxarea_str;
                 return false;
             }
 
