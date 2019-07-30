@@ -2,7 +2,7 @@
 
 A C++ program, which creates a basement for usage and testing of Finite Element Method (FEM) algorithms for practical problems.
 
-![](https://ibb.co/W0R0Zjf)
+![](/resource/preview.png)
 
 **Table of Contents**
 - [Finite Element Analysis Test Application](#finite-element-analysis-test-application)
