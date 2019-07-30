@@ -2,6 +2,8 @@
 
 A C++ program, which creates a basement for usage and testing of Finite Element Method (FEM) algorithms for practical problems.
 
+![](https://ibb.co/W0R0Zjf)
+
 **Table of Contents**
 - [Finite Element Analysis Test Application](#finite-element-analysis-test-application)
 - [Description](#description)
@@ -39,6 +41,8 @@ Initially built in Windows, the code and used dependencies are adapted for compi
 
 # How to build
 
+Only 64-bit architecture is supported.
+
 During the development the project had the following structure:
 
 + [project-directory]
@@ -54,16 +58,21 @@ You may choose any other structure, as long as you fixate your changes in the co
 
 Here was used Visual C++ 15.0, which corresponds with Visual Studio 2017. 
 
-1. Install Qt Creator, or use any other programs which are able to build a QMAKE-based project.
+1. Install Qt Creator, or use any other IDE which is able to build a Qt-based project (mostly Qt Visual Studio Tools are meant here).
 
-2. Download and build Open Cascade, preferably of the version mentioned above, and make it visible for the main program by editing the main *.pro* file (the place where to edit is marked by comment).
+2. Download and build Open Cascade according to [this manual](https://dev.opencascade.org/doc/overview/html/occt_dev_guides__building.html), preferably of the version mentioned above, and make it visible for the main program by editing the main *src/feata/FEATA.pro* file (the place where to edit is marked by comment). As additional third-party product build TBB (Threading Building Blocks).
 
-If you want to build examplary plugins, only this is required:
+3. Open the mentioned *.pro* file in Qt-friendly IDE and compile it.
 
-- Download Eigen and do the same thing for *.pro* file of the solver examplary  project.
+If you want to build examplary plugins, which are located in the *src* folder and tagged as *plug*, only this is required:
+
+- Download Eigen and do the same thing for *.pro* file of the solver examplary project.
 
 ## Linux
-Coming up soon.
+
+GCC 7.3.0 was used here. 
+
+The same as in Windows case, since all involved components are cross-platform.
 
 # Plugin system
 
