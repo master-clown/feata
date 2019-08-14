@@ -18,7 +18,13 @@ A C++ program, which creates a basement for usage and testing of Finite Element 
 
 
 # Description
-The program provides GUI and plugin system for working with FEM algorithms. It allows to load 3D geometry, generate its volumeric mesh and solve a problem, described in terms of FEM, by using user-developed plugins.
+The program provides GUI and plugin platform for working with FEM algorithms. It allows to load 3D geometry, generate its volumetric mesh and solve a problem, described in terms of FEM, by using user-developed plugins.
+
+# Advantages
+* Program any physics model without messing with GUI problems.
+* Compare and test on the same task different algorithms.
+* Conduct your research of numerical methods (as consequence of the previous points).
+* Missing something in the main program? It's open to modifications, which will work for all of your plugins.
 
 # Platforms
 Initially built in Windows, the code and used dependencies are adapted for compiling on other platforms, but it is yet to be properly tested.
@@ -45,12 +51,11 @@ Only 64-bit architecture is supported.
 
 During the development the project had the following structure:
 
-+ [project-directory]
- * 3rdparty — all libraries are contained here
- * build — where goes the compiled program
- * src — like in this repository
- * resource — like in this repository
- * test — various test files
+ * *3rdparty* — all libraries are contained here
+ * *build* — where goes the compiled program
+ * *src* — like in this repository
+ * *resource* — like in this repository
+ * *test* — various test files
 
 You may choose any other structure, as long as you fixate your changes in the corresponding project files (*.pro* and *.pri*).
 
@@ -66,7 +71,7 @@ Here was used Visual C++ 15.0, which corresponds with Visual Studio 2017.
 
 If you want to build examplary plugins, which are located in the *src* folder and tagged as *plug*, only this is required:
 
-- Download Eigen and do the same thing for *.pro* file of the solver examplary project.
+- Download Eigen and do the second step for *.pro* file of the solver examplary project.
 
 ## Linux
 
